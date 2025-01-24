@@ -68,4 +68,27 @@ class DatabaseHelper {
     }
     return null;
   }
+
+  Future<List<Map<String, dynamic>>> getAllPets() async {
+    final db = await database;
+    return await db.query('pets');
+  }
+
+  Future<List<Map<String, dynamic>>> getMealPlansByPetName(String petName) async {
+    final db = await database;
+    return await db.query(
+      'meal_plans',
+      where: 'food_type = ?',
+      whereArgs: [petName],
+    );
+  }
+
+  Future<void> deletePet(int id) async {
+    final db = await database;
+    await db.delete(
+      'pets',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }

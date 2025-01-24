@@ -17,7 +17,7 @@ class _MainAppState extends State<MainApp> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     PetFormPage(),
-    Text('Home Page'),
+    HomePage(),
     Text('Nav2 Page'),
   ];
 
@@ -52,6 +52,152 @@ class _MainAppState extends State<MainApp> {
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.amber[800],
           onTap: _onItemTapped,
+        ),
+      ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Evcil Hayvanlar'),
+      ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: DatabaseHelper().getAllPets(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Bir hata oluştu'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('Kayıtlı evcil hayvan bulunmamaktadır'));
+          } else {
+            final pets = snapshot.data!;
+            return ListView.builder(
+              itemCount: pets.length,
+              itemBuilder: (context, index) {
+                final pet = pets[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PetDetailPage(pet: pet),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Adı: ${pet['name']}'),
+                        Text('Türü: ${pet['type']}'),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class PetDetailPage extends StatelessWidget {
+  final Map<String, dynamic> pet;
+
+  const PetDetailPage({super.key, required this.pet});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(pet['name']),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Adı: ${pet['name']}'),
+            Text('Türü: ${pet['type']}'),
+            Text('Yaşı: ${pet['age']}'),
+            Text('Ağırlık: ${pet['weight']}'),
+            Text('Sağlık Durumu: ${pet['health']}'),
+            const SizedBox(height: 20),
+            const Text('Yemek Düzeni:'),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: DatabaseHelper().getMealPlansByPetName(pet['name']),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Bir hata oluştu'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Text('Yemek düzeni bulunmamaktadır');
+                } else {
+                  final mealPlans = snapshot.data!;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: mealPlans.map((mealPlan) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Yemek Türü: ${mealPlan['food_type']}'),
+                          Text('Yemek Saati: ${mealPlan['meal_time']}'),
+                          Text('Miktar: ${mealPlan['amount']}'),
+                          Text('Su Takibi: ${mealPlan['water_tracking']}'),
+                          const SizedBox(height: 10),
+                        ],
+                      );
+                    }).toList(),
+                  );
+                }
+              },
+            ),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Evcil Hayvanı Sil'),
+                    content: const Text('Bu evcil hayvanı silmek istiyor musunuz?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Hayır'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await DatabaseHelper().deletePet(pet['id']);
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Evet'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: const Text('Evcil Hayvanı Sil'),
+            ),
+          ],
         ),
       ),
     );
