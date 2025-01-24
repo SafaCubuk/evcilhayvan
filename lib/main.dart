@@ -180,6 +180,7 @@ class AddMealPlanForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
+    final TextEditingController petNameController = TextEditingController();
     final TextEditingController foodTypeController = TextEditingController();
     final TextEditingController mealTimeController = TextEditingController();
     final TextEditingController amountController = TextEditingController();
@@ -195,6 +196,12 @@ class AddMealPlanForm extends StatelessWidget {
           key: _formKey,
           child: ListView(
             children: <Widget>[
+              TextFormField(
+                controller: petNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Evcil Hayvanın Adı',
+                ),
+              ),
               TextFormField(
                 controller: foodTypeController,
                 decoration: const InputDecoration(
@@ -221,17 +228,25 @@ class AddMealPlanForm extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    DatabaseHelper().insertMealPlan({
-                      'food_type': foodTypeController.text,
-                      'meal_time': mealTimeController.text,
-                      'amount': double.parse(amountController.text),
-                      'water_tracking': waterTrackingController.text,
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Yemek düzeni kaydedildi')),
-                    );
+                    final petName = petNameController.text;
+                    final pet = await DatabaseHelper().getPetByName(petName);
+                    if (pet != null) {
+                      DatabaseHelper().insertMealPlan({
+                        'food_type': foodTypeController.text,
+                        'meal_time': mealTimeController.text,
+                        'amount': double.parse(amountController.text),
+                        'water_tracking': waterTrackingController.text,
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Yemek düzeni kaydedildi')),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Böyle bir evcil hayvan bulunmamaktadır')),
+                      );
+                    }
                   }
                 },
                 child: const Text('Kaydet'),

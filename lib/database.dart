@@ -55,4 +55,17 @@ class DatabaseHelper {
     final db = await database;
     await db.insert('meal_plans', mealPlan);
   }
+
+  Future<Map<String, dynamic>?> getPetByName(String name) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'pets',
+      where: 'name = ?',
+      whereArgs: [name],
+    );
+    if (maps.isNotEmpty) {
+      return maps.first;
+    }
+    return null;
+  }
 }
