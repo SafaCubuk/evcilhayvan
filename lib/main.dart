@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'database.dart';
 
 void main() {
   runApp(const MainApp());
@@ -101,6 +102,11 @@ class AddPetForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController typeController = TextEditingController();
+    final TextEditingController ageController = TextEditingController();
+    final TextEditingController weightController = TextEditingController();
+    final TextEditingController healthController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -113,26 +119,31 @@ class AddPetForm extends StatelessWidget {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                controller: nameController,
                 decoration: const InputDecoration(
                   labelText: 'Evcil Hayvanın Adı',
                 ),
               ),
               TextFormField(
+                controller: typeController,
                 decoration: const InputDecoration(
                   labelText: 'Türü',
                 ),
               ),
               TextFormField(
+                controller: ageController,
                 decoration: const InputDecoration(
                   labelText: 'Yaşı',
                 ),
               ),
               TextFormField(
+                controller: weightController,
                 decoration: const InputDecoration(
                   labelText: 'Ağırlık',
                 ),
               ),
               TextFormField(
+                controller: healthController,
                 decoration: const InputDecoration(
                   labelText: 'Sağlık Durumu',
                 ),
@@ -141,7 +152,16 @@ class AddPetForm extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Form verilerini işleme kodu buraya gelecek
+                    DatabaseHelper().insertPet({
+                      'name': nameController.text,
+                      'type': typeController.text,
+                      'age': int.parse(ageController.text),
+                      'weight': double.parse(weightController.text),
+                      'health': healthController.text,
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Evcil hayvan bilgileri kaydedildi')),
+                    );
                   }
                 },
                 child: const Text('Kaydet'),
@@ -160,6 +180,10 @@ class AddMealPlanForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
+    final TextEditingController foodTypeController = TextEditingController();
+    final TextEditingController mealTimeController = TextEditingController();
+    final TextEditingController amountController = TextEditingController();
+    final TextEditingController waterTrackingController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -172,21 +196,25 @@ class AddMealPlanForm extends StatelessWidget {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                controller: foodTypeController,
                 decoration: const InputDecoration(
                   labelText: 'Yemek Türleri (kuru mama, yaş mama, ev yemeği vb.)',
                 ),
               ),
               TextFormField(
+                controller: mealTimeController,
                 decoration: const InputDecoration(
                   labelText: 'Yemek Saatleri (Sabah, öğle, akşam)',
                 ),
               ),
               TextFormField(
+                controller: amountController,
                 decoration: const InputDecoration(
                   labelText: 'Miktar',
                 ),
               ),
               TextFormField(
+                controller: waterTrackingController,
                 decoration: const InputDecoration(
                   labelText: 'Su Takibi (Su içip içmediği)',
                 ),
@@ -195,7 +223,15 @@ class AddMealPlanForm extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Form verilerini işleme kodu buraya gelecek
+                    DatabaseHelper().insertMealPlan({
+                      'food_type': foodTypeController.text,
+                      'meal_time': mealTimeController.text,
+                      'amount': double.parse(amountController.text),
+                      'water_tracking': waterTrackingController.text,
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Yemek düzeni kaydedildi')),
+                    );
                   }
                 },
                 child: const Text('Kaydet'),
