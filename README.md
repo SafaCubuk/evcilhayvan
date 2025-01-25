@@ -26,7 +26,6 @@ Bu proje, evcil hayvanların bilgilerini ve yemek düzenlerini takip etmek için
 
 
 ### Diğer
-- **shared_preferences**: Uygulama ayarlarını ve kullanıcı tercihlerini yerel olarak saklamak için kullanılan Flutter eklentisidir.
 - **FutureBuilder**: Asenkron işlemleri yönetmek ve sonuçlarını UI'da görüntülemek için kullanılan widget'tır.
 
 ## Proje Yapısı
