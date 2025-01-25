@@ -20,7 +20,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets\images\pets.png
-    - assets\images\Anasayfa.png
+    - assets\images\homepage.png
     - assets\images\detailpetsanddelete.png
     - assets\images\addfood.png
     - assets\images\detailaddnew.png

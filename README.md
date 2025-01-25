@@ -45,9 +45,14 @@ Bu proje, evcil hayvanların bilgilerini ve yemek düzenlerini takip etmek için
    ```sh
    git clone https://github.com/kullaniciadi/evcilhayvantakip.git
 
-![Anasayfa](assets/images/anasayfa.png)
+
+![Anasayfa](assets/images/homepage.png)
+
 ![Evcil hayvanlar hakkında detaylı bilgiler ve silme](assets/images/detailpetsanddelete.png)
+
 ![Evcil hayvan ekleme](assets/images/addnewpets.png)
+
 ![Evcil hayvan bilgileri ekleme](assets/images/detailaddnew.png)
+
 ![Yemek bilgileri ekleme](assets/images/addfood.png)
 
